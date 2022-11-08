@@ -26,7 +26,7 @@ function module.new(class, sub_folder)
     config_tb.Binded = {}
 
     control_pickup.OnServerEvent:Connect(function(player, key_pickup)
-        if table_contains(config_tb.Subscribed, player) then
+        if table.find(config_tb.Subscribed, player) then
             if config_tb.Binded[key.KeyCode] then
                 config_tb.Binded[key.KeyCode](player)
             elseif config_tb.Binded[key.UserInputType] then
