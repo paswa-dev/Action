@@ -1,6 +1,7 @@
 local module = {}
 module.__index = module
 
+--[[
 local function table_contains(t, v)
     for i, value in ipairs(t) do
         if value == v then
@@ -9,6 +10,8 @@ local function table_contains(t, v)
     end
     return nil
 end
+]]--
+
 
 function module.new(object, states : {any})
     states = states or {}
@@ -35,7 +38,7 @@ function module:SetObject(object)
 end
 
 function module:AddState(state)
-    if table_contains(self.States, state) then
+    if table.find(self.States, state) then
         return debug.traceback("State already exists.")
     else
         self.OnStateChange.Fire(self.Object, state, "A")
@@ -46,7 +49,7 @@ end
 
 function module:RemoveState(state)
     local success, err = pcall(function()
-        table.remove(self.States, table_contains(self.States, state))
+        table.remove(self.States, table.find(self.States, state))
     end)
 
     if not success then
@@ -58,7 +61,7 @@ end
 
 function module:AppendStates(states: {any})
     for _, state in ipairs(states) do
-        if table_contains(self.States, state) then
+        if table.find(self.States, state) then
             debug.traceback("State already exists. Skipping...")
         else
             self.OnStateChange.Fire(self.Object, state, "A")
@@ -70,7 +73,7 @@ end
 function module:RemoveStates(states: {any})
     for _, state in ipairs(states) do
         local success, err = pcall(function()
-            table.remove(self.States, table_contains(self.States, state))
+            table.remove(self.States, table.find(self.States, state))
         end)
     
         if not success then

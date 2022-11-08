@@ -4,6 +4,7 @@ local replicated = game:GetService("ReplicatedStorage")
 local module = {}
 module.__index = module
 
+--[[
 local function table_contains(t, v)
     for i, value in ipairs(t) do
         if value == v then
@@ -12,6 +13,7 @@ local function table_contains(t, v)
     end
     return nil
 end
+]]--
 
 function module.new(class, sub_folder)
     sub_folder = sub_folder or replicated
@@ -37,7 +39,7 @@ function module.new(class, sub_folder)
 end
 
 function module:subscribe(player)
-    if table_contains(self.Subscribed, player) then
+    if table.find(self.Subscribed, player) then
         return debug.traceback("Player already subscribed.")
     end
     table.insert(self.Subscribed, player)
@@ -46,7 +48,7 @@ end
 
 function module:unsubscribe(player)
     local success, err = pcall(function()
-        table.remove(self.Subscribed, table_contains(self.Subscribed, player))
+        table.remove(self.Subscribed, table.find(self.Subscribed, player))
     end)
 
     if not success then
