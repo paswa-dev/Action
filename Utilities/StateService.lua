@@ -1,5 +1,7 @@
 local module = {}
-_G.global_states = {}
+if (not _G.global_states) then
+    _G.global_states = {}
+end
 module.__index = module
 
 module.OnStateChange = Instance.new("BindableEvent")
