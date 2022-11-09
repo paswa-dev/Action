@@ -1,5 +1,9 @@
 local module = {}
+module.global_states = {}
 module.__index = module
+
+module.OnStateChange = Instance.new("BindableEvent")
+module.OnObjectChange = Instance.new("BindableEvent")
 
 --[[
 local function table_contains(t, v)
@@ -15,71 +19,67 @@ end
 
 function module.new(object, states : {any})
     states = states or {}
-
-    local config_lb = {}
-    config_lb.Object = object
-    config_lb.States = states
-    config_lb.OnStateChange = Instance.new("BindableEvent")
-    config_lb.OnObjectChange = Instance.new("BindableEvent")
-
-    return setmetatable(config_lb, module)
+    module.global_states[object] = states
 end
 
-function module:Remove()
-    self = nil
+function module.Remove(object)
+    module.global_states[object] = nil
 end
 
-function module:Clear()
-    self.States = {}
+function module.Clear(object)
+    module.global_states[object] = {}
 end
 
-function module:SetObject(object)
-    self.Object = object
+function module.SetObject(object, new_object)
+    local c = module.global_states[object]
+    module.global_states[object] = nil
+    module.global_states[new_object] = c
+
 end
 
-function module:AddState(state)
-    if table.find(self.States, state) then
+function module.AddState(object, state)
+    if table.find(module.global_states[object], state) then
         return debug.traceback("State already exists.")
     else
-        self.OnStateChange.Fire(self.Object, state, "A")
-        table.insert(self.States, state)
+        self.OnStateChange.Fire(object, state, "A")
+        table.insert(module.global_states[object], state)
     end
 end
 
 
-function module:RemoveState(state)
+function module.RemoveState(object, state)
     local success, err = pcall(function()
-        table.remove(self.States, table.find(self.States, state))
+        table.remove(module.global_states[object], table.find(module.global_states[object], state))
     end)
 
     if not success then
         return debug.traceback("Error when attempting to remove non-existing state.")
     elseif success then
-        self.OnStateChange.Fire(self.Object, state, "R")
+        self.OnStateChange.Fire(object, state, "R")
     end
 end
 
-function module:AppendStates(states: {any})
+function module.AppendStates(object, states: {any})
     for _, state in ipairs(states) do
-        if table.find(self.States, state) then
+        if table.find(module.global_states[object], state) then
             debug.traceback("State already exists. Skipping...")
         else
-            self.OnStateChange.Fire(self.Object, state, "A")
-            table.insert(self.States, state)
+            self.OnStateChange.Fire(object, state, "A")
+            table.insert(module.global_states[object], state)
         end
     end
 end
 
-function module:RemoveStates(states: {any})
+function module.RemoveStates(object, states: {any})
     for _, state in ipairs(states) do
         local success, err = pcall(function()
-            table.remove(self.States, table.find(self.States, state))
+            table.remove(module.global_states[object], table.find(module.global_states[object], state))
         end)
     
         if not success then
             debug.traceback("Error when attempting to remove non-existing state.")
         elseif success then
-            self.OnStateChange.Fire(self.Object, state, nil)
+            self.OnStateChange.Fire(object, state, "R")
         end
     end
 end
