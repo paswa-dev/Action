@@ -13,6 +13,9 @@ function _G.ServerSave(name, data)
     elseif not name then
         debug.traceback("No name/scope was provided")
         return nil
+    elseif not ServerData[name] then
+        debug.traceback("Name/Scope does not exists under ServerData")
+        return nil
     end
     ServerData[name] = data
 end
