@@ -5,7 +5,6 @@ local g = 9.81 -- gravity
 local pi = math.pi -- Pi
 
 -- Formula for reference
--- https://wikimedia.org/api/rest_v1/media/math/render/svg/6a1f2a92d197cce47f77a919abe207d61bc57c92
 -- https://wikimedia.org/api/rest_v1/media/math/render/svg/f8682eed9904228cfcb7d0f9a488b2cd9b49f2f4
 
 function module.wave(position, wave_length, steepness, direction_2d, _time, time_constant)
