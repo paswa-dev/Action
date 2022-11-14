@@ -8,7 +8,6 @@ local pi = math.pi -- Pi
 -- https://wikimedia.org/api/rest_v1/media/math/render/svg/6a1f2a92d197cce47f77a919abe207d61bc57c92
 
 
-
 function module.wave(position, wave_length, steepness, direction_2d, _time, time_constant)
     time_constant = time_constant or 1
     local k = ( 2 * pi ) / wave_length -- Wave Number (Non linear)
