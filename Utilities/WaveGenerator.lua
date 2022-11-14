@@ -6,6 +6,17 @@ local pi = math.pi -- Pi
 
 -- Formula for reference
 -- https://wikimedia.org/api/rest_v1/media/math/render/svg/f8682eed9904228cfcb7d0f9a488b2cd9b49f2f4
+-- https://wikimedia.org/api/rest_v1/media/math/render/svg/532bd230b52b4473e77dbc970d937a23b5e32f26
+
+--[[
+local function summit(i, i2, i3)
+    local total = 0
+    for n=i, i2 do
+        total += n ^ i3
+    end
+    return total
+end
+]]--
 
 function module.wave(position, wave_length, steepness, direction_2d, _time, time_constant)
     time_constant = time_constant or 1
