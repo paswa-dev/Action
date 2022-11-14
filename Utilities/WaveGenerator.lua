@@ -15,9 +15,9 @@ function module.wave(position, wave_length, steepness, direction_2d, _time, time
     local k_steep = steepness/k -- Steepness
     local d = direction_2d.Unit -- X/Z -> X,Y
     local c = math.sqrt(g/k) -- Phase Speed
-    local f = k * (d:Dot(Vector2.new(position.X, position.Y)) - c * (_time/time_constant))
+    local f = k * d:Dot(Vector2.new(position.X, position.Y)) - c * (_time/time_constant)
     --        wave_number * (angle between direction and point) - phase_speed * time
-    
+
     local f_cos = math.cos(f)
 
     local x = d.X * (k_steep * f_cos)
