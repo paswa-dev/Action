@@ -38,6 +38,18 @@ function module.new(class, sub_folder)
     return setmetatable(config_tb, module)
 end
 
+function module:quick_bind(user_bind, callback, override)
+    if override then
+        config_tb.Binded[user_bind] = callback
+    else
+        if config_tb.Binded[user_bind] then
+            return debug.traceback("Keybind is already binded.")
+        else
+            config_tb.Binded[user_bind] = callback
+        end
+    end
+end
+
 function module:subscribe(player)
     if table.find(self.Subscribed, player) then
         return debug.traceback("Player already subscribed.")
