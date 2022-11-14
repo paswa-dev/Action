@@ -9,6 +9,7 @@ local pi = math.pi -- Pi
 -- https://wikimedia.org/api/rest_v1/media/math/render/svg/532bd230b52b4473e77dbc970d937a23b5e32f26
 
 --[[
+https://wikimedia.org/api/rest_v1/media/math/render/svg/fa60674170979df40a48198788ff54815f29130c
 local function summit(min, max, power)
     local total = 0
     for n=min, max do
