@@ -3,6 +3,10 @@ local prompt = {}
 prompt.storage = {}
 prompt.activated = {}
 prompt.object = nil
+prompt.Enums = {
+    enter = 1,
+    leave = 0
+}
 
 
 local function get_distance(x1, x2)
@@ -19,18 +23,18 @@ task.spawn(function()
                 local d = get_distance(prompt.object.Position, i.Position)
                 if ( d >= v.radius) and not index then
                     table.insert(prompt.activated, i)
-                    v.enter()
+                    v.func(1)
                 elseif ( d < v.radius) and index then
                     table.remove(prompt.activated, index)
-                    v.leave()
+                    v.func(0)
                 end
             end)
         end
     end
 end)
 
-function prompt.new(adornee, radius, enter_callback, leave_callback)
-    prompt.storage[adornee] = {enter=enter_callback, leave=leave_callback, radius=radius}
+function prompt.new(adornee, radius, callback)
+    prompt.storage[adornee] = {func=callback, radius=radius}
 end
 
 function prompt.remove(adornee)
