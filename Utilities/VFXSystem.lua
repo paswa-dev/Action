@@ -5,8 +5,10 @@ function vfx.new(location, name)
     local file
     if not name then local file = location else file=location[name] end
     if not file then debug.trackback("File does not exists.") return end
+    
     local config = {}
     config.emitters = {}
+
     for i, v in next, file:GetDescendents() do
         if v:IsA("ParticleEmitter") then
             table.insert(config.emitters, {emitter=v, amount=50, delay=nil})
