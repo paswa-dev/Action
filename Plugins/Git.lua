@@ -8,12 +8,17 @@ local commit_button = toolbar:CreateButton("Commit", "Commit")
 local connect_button = toolbar:CreateButton("Connect", "Connect")
 
 local github_api = "https://api.github.com"
+local username = game.Players.LocalPlayer.Name .. "/" ..game.Players.LocalPlayer.UserId,
+
 
 local history = {}
+
 local settings = {
     github_token = "",
-    username = game.Players.LocalPlayer.Name .. "/" ..game.Players.LocalPlayer.UserId,
-    github_name = ""
+    github_name = "",
+    github_email = "",
+    github_account_name = "",
+    repo_name = ""
 }
 
 local function get(endpoint, payload)
