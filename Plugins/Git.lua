@@ -37,5 +37,5 @@ connect_button.Click:Connect(function()
         Accept = "application/vnd.github.v3+json"
     }
 
-    http.PostAsync(github_api .. "/user/repos", http.JSONEncode(payload), Enum.HttpContentType.ApplicationJson, false, headers)
+    http:PostAsync(github_api .. "/user/repos", http:JSONEncode(payload), Enum.HttpContentType.ApplicationJson, false, headers)
 end)
