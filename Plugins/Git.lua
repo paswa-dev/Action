@@ -16,11 +16,8 @@ local settings = {
     github_name = ""
 }
 
-local function get(endpoint)
+local function get(endpoint, payload)
     if not settings.github_name or not settings.github_token then return end
-    local payload = {
-        ["name"]=settings.github_name
-    }
     local headers = {
         Authorization = "TOKEN" .. settings.github_token,
         Accept = "application/vnd.github.v3+json",
