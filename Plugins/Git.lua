@@ -23,7 +23,8 @@ local function get(endpoint)
     }
     local headers = {
         Authorization = "TOKEN" .. settings.github_token,
-        Accept = "application/vnd.github.v3+json"
+        Accept = "application/vnd.github.v3+json",
+        ["X-GitHub-Api-Version"]: "2022-11-28"
     }
 
     local response = http:PostAsync(github_api .. endpoint, http:JSONEncode(payload), Enum.HttpContentType.ApplicationJson, false, headers)
