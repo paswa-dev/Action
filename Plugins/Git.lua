@@ -1,5 +1,5 @@
 local CHS = game:GetService("ChangeHistoryService")
-local http = game:GetService("HTTPService")
+local http = game:GetService("HttpService")
 local selection = game:GetService("Selection")
 local toolbar = plugin:CreateToolbar("GitRo")
 
@@ -29,5 +29,13 @@ end)
 
 connect_button.Click:Connect(function()
     if not settings.github_name or not settings.github_token then return end
-    local payload = {["name"]=settings.github_name}
+    local payload = {
+        ["name"]=settings.github_name
+    }
+    local headers = {
+        Authorization = "TOKEN" .. settings.github_token,
+        Accept = "application/vnd.github.v3+json"
+    }
+
+    http.PostAsync(github_api .. "/user/repos", http.JSONEncode(payload), Enum.HttpContentType.ApplicationJson, false, headers)
 end)
