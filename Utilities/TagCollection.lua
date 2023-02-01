@@ -19,7 +19,6 @@ local function init()
         Tag:GetInstanceAddedSignal(tag, function() module.actions[tag].start end)
         Tag:GetInstanceRemovedSignal(tag, function() module.actions[tag].end end)
         if module.actions[tag] then runTag(tag, module.actions[tag].start) end
-        
     end)
     init = true
 end
