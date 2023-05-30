@@ -110,43 +110,42 @@ function debugC.Traceback(text, color, duration)
 end
 
 function debugC.CreatePin(name)
-	local config = {} do 
-		local ID = http:GenerateGUID(false)
-		config.Name = name
-		config.TaskID = ID
-		config.PinData = {}
-		config.Connections = {}
-		config.Enabled = false
-		config.Parent = UI "ScreenGui" {
-			Name = "Debug" .. ID,
-			Parent = PlayerGui
-		}
-		config.Root = UI "Frame" {
-			Name = ID,
-			Parent = config.Parent,
-			AnchorPoint = Vector2.new(0.5,0.5),
-			Size = UDim2.fromScale(0.1, 0.1),
-			BackgroundTransparency = 1
-		}
-		config.WorldPosition = Vector3.new(5,5,5)
-		config.Adornee = nil
-		config.OpenThread = coroutine.create(function()
-			while true do
-				if config.Adornee then config.WorldPosition = config.Adornee.CFrame.Position end
-				local vector, onScreen = camera:WorldToScreenPoint(config.WorldPosition)
-				if not onScreen then
-					config.Root.Visible = false
-				elseif onScreen then
-					if not config.Root.Visible then config.Root.Visible = true end
-					config.Root.Position = UDim2.fromOffset(vector.X, vector.Y)
-				end
-				coroutine.yield()
+	local config = {}
+	local ID = http:GenerateGUID(false)
+	config.Name = name
+	config.TaskID = ID
+	config.PinData = {}
+	config.Connections = {}
+	config.Enabled = false
+	config.Parent = UI "ScreenGui" {
+		Name = "Debug" .. ID,
+		Parent = PlayerGui
+	}
+	config.Root = UI "Frame" {
+		Name = ID,
+		Parent = config.Parent,
+		AnchorPoint = Vector2.new(0.5,0.5),
+		Size = UDim2.fromScale(0.1, 0.1),
+		BackgroundTransparency = 1
+	}
+	config.WorldPosition = Vector3.new(5,5,5)
+	config.Adornee = nil
+	config.OpenThread = coroutine.create(function()
+		while true do
+			if config.Adornee then config.WorldPosition = config.Adornee.CFrame.Position end
+			local vector, onScreen = camera:WorldToScreenPoint(config.WorldPosition)
+			if not onScreen then
+				config.Root.Visible = false
+			elseif onScreen then
+				if not config.Root.Visible then config.Root.Visible = true end
+				config.Root.Position = UDim2.fromOffset(vector.X, vector.Y)
 			end
-		end)
-	end
+			coroutine.yield()
+		end
+	end)
 
 
-	UI "UIListLayout" {
+	local _ = UI "UIListLayout" {
 		Parent = config.Root,
 		Name = "ListLayout",
 		SortOrder = Enum.SortOrder.LayoutOrder,
