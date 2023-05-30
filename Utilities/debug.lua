@@ -15,7 +15,7 @@ local PinMT = {__index = Pin}
 	Remove Comments,
 	Fix module structure and functions,
 	Renaming,
-	Efficen
+	Multiprocessing or Multithreading? - Non-shared memory or shared memory. Race conditions common.
 ]]
 
 local message_colors = {
