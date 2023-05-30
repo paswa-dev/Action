@@ -127,7 +127,7 @@ function debugC.CreatePin(name)
 			Adornee = nil, -- Make sure config can be updated and recieved via the coroutine. If not add config as parameters and pass.
 			OpenThread = coroutine.create(function()
 				while true do
-					if config.Adornee then config.WorldPosition = config.Adornee.Position end
+					if config.Adornee then config.WorldPosition = config.Adornee.CFrame.Position end
 					local vector, onScreen = camera:WorldToScreenPoint(config.WorldPosition)
 					if not onScreen then
 						self.Root.Visible = false
