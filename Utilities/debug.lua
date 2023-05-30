@@ -44,7 +44,7 @@ local function UI(component)
 			return obj
 		end
 	end
-	
+
 end
 
 local function createErrorDisplayer(error_text, color)
@@ -61,7 +61,7 @@ local function createErrorDisplayer(error_text, color)
 		Size = UDim2.fromScale(0.335, 0.02),
 		AutomaticSize = Enum.AutomaticSize.XY
 	}
-	
+
 	--
 
 	local uITextSizeConstraint = UI "UITextSizeConstraint" {
@@ -69,14 +69,14 @@ local function createErrorDisplayer(error_text, color)
 		MaxTextSize = 13,
 		Parent = message
 	}
-	
+
 	message.Parent = errorBin
 	return message
 end
 
 function debugC.Init()
 	log_service.MessageOut:Connect(debugC.AddEntry)
-	
+
 	player = game:GetService("Players").LocalPlayer
 	PlayerGui = player:WaitForChild("PlayerGui")
 
@@ -110,42 +110,41 @@ function debugC.Traceback(text, color, duration)
 end
 
 function debugC.CreatePin(name)
-	local config do 
-		config = {
-			Name = name,
-			TaskID = http:GenerateGUID(false),
-			PinData = {},
-			Connections = {},
-			Enabled = false,
-			Parent = UI "ScreenGui" {
-				Name = "Debug" .. config.TaskID,
-				Parent = PlayerGui
-			},
-			Root = UI "Frame" {
-				Name = config.TaskID,
-				Parent = config.Parent,
-				AnchorPoint = Vector2.new(0.5,0.5),
-				Size = UDim2.fromScale(0.1, 0.1),
-				BackgroundTransparency = 1
-			},
-			WorldPosition = Vector3.new(5,5,5),
-			Adornee = nil, 
-			OpenThread = coroutine.create(function()
-				while true do
-					if config.Adornee then config.WorldPosition = config.Adornee.CFrame.Position end
-					local vector, onScreen = camera:WorldToScreenPoint(config.WorldPosition)
-					if not onScreen then
-						self.Root.Visible = false
-					elseif onScreen then
-						if not self.Root.Visible then self.Root.Visible = true end
-						self.Root.Position = UDim2.fromOffset(vector.X, vector.Y)
-					end
-					coroutine.yield()
-				end
-			end)
+	local config = {} do 
+		local ID = http:GenerateGUID(false)
+		config.Name = name
+		config.TaskID = ID
+		config.PinData = {}
+		config.Connections = {}
+		config.Enabled = false
+		config.Parent = UI "ScreenGui" {
+			Name = "Debug" .. ID,
+			Parent = PlayerGui
 		}
+		config.Root = UI "Frame" {
+			Name = ID,
+			Parent = config.Parent,
+			AnchorPoint = Vector2.new(0.5,0.5),
+			Size = UDim2.fromScale(0.1, 0.1),
+			BackgroundTransparency = 1
+		}
+		config.WorldPosition = Vector3.new(5,5,5)
+		config.Adornee = nil
+		config.OpenThread = coroutine.create(function()
+			while true do
+				if config.Adornee then config.WorldPosition = config.Adornee.CFrame.Position end
+				local vector, onScreen = camera:WorldToScreenPoint(config.WorldPosition)
+				if not onScreen then
+					config.Root.Visible = false
+				elseif onScreen then
+					if not config.Root.Visible then config.Root.Visible = true end
+					config.Root.Position = UDim2.fromOffset(vector.X, vector.Y)
+				end
+				coroutine.yield()
+			end
+		end)
 	end
-	
+
 
 	UI "UIListLayout" {
 		Parent = config.Root,
@@ -236,7 +235,7 @@ function Pin:Destroy()
 		end
 		self = nil
 	end
-	
+
 	debugC.Pins[name] = nil
 end
 
