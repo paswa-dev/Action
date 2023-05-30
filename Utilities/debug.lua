@@ -124,7 +124,7 @@ function debugC.CreatePin(name)
 				BackgroundTransparency = 1
 			},
 			WorldPosition = Vector3.new(5,5,5),
-			Adornee = nil,
+			Adornee = nil, -- Make sure config can be updated and recieved via the coroutine. If not add config as parameters and pass.
 			OpenThread = coroutine.create(function()
 				while true do
 					if config.Adornee then config.WorldPosition = config.Adornee.Position end
