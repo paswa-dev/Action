@@ -6,11 +6,12 @@ local FastSignal = require(script.Parent.FastSignal)
 local camera = game.Workspace.CurrentCamera
 local player, PlayerGui, errorBin
 
-local debugC = {
-	Pins = {}
-}
-local Pin = {}
-Pin.__index = Pin
+local debugC, Pin = { Pins = {} }, {}
+local PinMT = {__index = Pin}
+
+--[[
+	Fix coroutine calculations?
+]]
 
 local message_colors = {
 	[Enum.MessageType.MessageInfo] = Color3.new(0.533333, 1, 0),
@@ -104,35 +105,51 @@ function debugC.Traceback(text, color, duration)
 end
 
 function debugC.CreatePin(name)
-	local config = {}
-	config.Name = name
-	config.TaskID = http:GenerateGUID(false)
-	config.PinData = {}
-	config.Connections = {}
-	
-	config.Enabled = false
-	config.Parent = UI "ScreenGui" {
-		Name = "Debug" .. config.TaskID,
-		Parent = PlayerGui
-	}
-	config.Root = UI "Frame" {
-		Name = config.TaskID,
-		Parent = config.Parent,
-		AnchorPoint = Vector2.new(0.5,0.5),
-		Size = UDim2.fromScale(0.1, 0.1),
-		BackgroundTransparency = 1
-	}
-	do
-		UI "UIListLayout" {
-			Parent = config.Root,
-			Name = "ListLayout",
-			SortOrder = Enum.SortOrder.LayoutOrder,
-			VerticalAlignment = Enum.VerticalAlignment.Bottom
+	local config do 
+		config = {
+			Name = name,
+			TaskID = http:GenerateGUID(false),
+			PinData = {},
+			Connections = {},
+			Enabled = false,
+			Parent = UI "ScreenGui" {
+				Name = "Debug" .. config.TaskID,
+				Parent = PlayerGui
+			},
+			Root = UI "Frame" {
+				Name = config.TaskID,
+				Parent = config.Parent,
+				AnchorPoint = Vector2.new(0.5,0.5),
+				Size = UDim2.fromScale(0.1, 0.1),
+				BackgroundTransparency = 1
+			},
+			WorldPosition = Vector3.new(5,5,5),
+			Adornee = nil,
+			OpenThread = coroutine.create(function()
+				while true do
+					if config.Adornee then config.WorldPosition = config.Adornee.Position end
+					local vector, onScreen = camera:WorldToScreenPoint(config.WorldPosition)
+					if not onScreen then
+						self.Root.Visible = false
+					elseif onScreen then
+						if not self.Root.Visible then self.Root.Visible = true end
+						self.Root.Position = UDim2.fromOffset(vector.X, vector.Y)
+					end
+					coroutine.yield()
+				end
+			end)
 		}
 	end
 	
-	config.WorldPosition = Vector3.new(5,5,5)
-	setmetatable(config, Pin)
+
+	UI "UIListLayout" {
+		Parent = config.Root,
+		Name = "ListLayout",
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		VerticalAlignment = Enum.VerticalAlignment.Bottom
+	}
+
+	setmetatable(config, PinMT)
 	debugC.Pins[name] = config
 	return config
 end
@@ -166,13 +183,13 @@ function Pin:Add(name : string, value : any)
 	return Label
 end
 
-function Pin:UpdateValue(name, value)
+function Pin:UpdateValue(name : string, value : any)
 	local pin = self.PinData[name]
 	if (not pin) or (not self.Enabled) then return end
 	pin.Set(value)
 end
 
-function Pin:Remove(name)
+function Pin:Remove(name : string)
 	assert(self.PinData[name], `Failed to find {name} in PinData`)
 	self.Connections[name]:Disconnect()
 	self.PinData[name].OnChange:Destroy()
@@ -190,13 +207,7 @@ function Pin:Enable()
 	if self.Enabled then return end
 	if #self.Root:GetChildren() == 0 then return end
 	rs:BindToRenderStep(self.TaskID, 100, function()
-		local vector, onScreen = camera:WorldToScreenPoint(self.WorldPosition)
-		if not onScreen then
-			self.Root.Visible = false
-		elseif onScreen then
-			if not self.Root.Visible then self.Root.Visible = true end
-			self.Root.Position = UDim2.fromOffset(vector.X, vector.Y)
-		end
+		coroutine.resume(self.OpenThread)
 	end)
 	self.Enabled = true
 end
@@ -209,10 +220,11 @@ function Pin:Disable()
 end
 
 function Pin:Destroy()
-	local name : string do
+	local name do
 		name = self.Name
 		self:Disable()
 		self:RemoveAll()
+		coroutine.close(self.OpenThread)
 		self.Parent:Destroy()
 		for i, v_ in pairs(self) do
 			self[i] = nil
